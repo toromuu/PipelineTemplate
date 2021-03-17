@@ -1,0 +1,66 @@
+version: "3"
+services:
+
+  vscoderemote:
+    build:
+      context: ./.devcontainer
+    container_name: VScodeDevRemoteContainer
+    ports:     
+      - "3000:3000"
+    volumes:
+      - ./app-workspace:/workspace/
+    tty: true
+    networks:
+      - mynetwork
+
+  sonarqube:
+    build:
+      context: ./sonarqube
+    container_name: sonarqube
+    expose:
+      - 9000
+    ports:
+      - "127.0.0.1:9000:9000"
+    networks:
+      - mynetwork
+    environment:
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
+    volumes:
+      - ./sonarqube/volume/sonarqube_conff:/opt/sonarqube/conf
+      - ./sonarqube/volume/sonarqube_dataa:/opt/sonarqube/data
+      - ./sonarqube/volume/sonarqube_extensionss:/opt/sonarqube/extensions
+
+  db:
+    image: postgres
+    container_name: postgre
+    networks:
+      - mynetwork
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+    volumes:
+      - ./postgre/volume/postgresqll:/var/lib/postgresql
+      - ./postgre/volume/postgresql_dataa:/var/lib/postgresql/data
+
+  jenkins:
+      build:
+          context: ./jenkins
+      container_name: jenkins
+      networks:
+          - mynetwork
+      volumes:
+          - ./jenkins/jenkins_home:/var/jenkins_home
+          - ./jenkins/jenkins_as_code/conf:/var/jenkins_conf
+          - ./jenkins/pipeline_def:/var/jenkins_home/workspace
+          - ./app-workspace:/var/lib/jenkins/repo
+      ports:
+          - "8080:8080"
+      environment:
+      - CASC_JENKINS_CONFIG=/var/jenkins_conf
+
+networks:
+  mynetwork:
+      driver: bridge
+  
