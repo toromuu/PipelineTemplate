@@ -2,40 +2,26 @@ jenkins:
   agentProtocols:
   - "JNLP4-connect"
   - "Ping"
-  authorizationStrategy:
-    loggedInUsersCanDoAnything:
-      allowAnonymousRead: false
   crumbIssuer:
     standard:
-      excludeClientIPFromCrumb: false
+      excludeClientIPFromCrumb: true
   disableRememberMe: false
   labelAtoms:
   - name: "master"
-  markupFormatter: "plainText"
+  markupFormatter:
+    rawHtml:
+      disableSyntaxHighlighting: false
   mode: NORMAL
   myViewsTabBar: "standard"
-  numExecutors: 2
+  numExecutors: 4
   primaryView:
     all:
       name: "all"
   projectNamingStrategy: "standard"
   quietPeriod: 5
   remotingSecurity:
-    enabled: true
-  scmCheckoutRetryCount: 0
-  securityRealm:
-    local:
-      allowsSignup: false
-      enableCaptcha: false
-      users:
-      - id: "admin"
-        name: "admin"
-        properties:
-        - "apiToken"
-        - mailer:
-            emailAddress: "dtororam"
-        - preferredProvider:
-            providerId: "default"
+    enabled: false
+  scmCheckoutRetryCount: 2
   slaveAgentPort: 50000
   updateCenter:
     sites:
@@ -50,76 +36,79 @@ security:
     creationOfLegacyTokenEnabled: false
     tokenGenerationOnCreationEnabled: false
     usageStatisticsEnabled: true
+  copyartifact:
+    mode: PRODUCTION
+  envInject:
+    enableLoadingFromMaster: false
+    enablePermissions: false
+    hideInjectedVars: false
+  globalJobDslSecurityConfiguration:
+    useScriptSecurity: true
   sSHD:
     port: -1
 unclassified:
   buildDiscarders:
     configuredBuildDiscarders:
     - "jobBuildDiscarder"
-  buildStepOperation:
-    enabled: false
-  email-ext:
+  defaultFolderConfiguration:
+    healthMetrics:
+    - worstChildHealthMetric:
+        recursive: true
+  extendedEmailPublisher:
     adminRequiredForTemplateTesting: false
     allowUnregisteredEnabled: false
     charset: "UTF-8"
     debugMode: false
-    defaultBody: |-
-      $PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS:
-
-      Check console output at $BUILD_URL to view the results.
+    defaultBody: "$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS:\r\n\r\nCheck\
+      \ console output at $BUILD_URL to view the results."
     defaultContentType: "text/plain"
     defaultSubject: "$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!"
-    defaultTriggerIds:
-    - "hudson.plugins.emailext.plugins.trigger.FailureTrigger"
-    mailAccount:
-      smtpPassword: "{AQAAABAAAAAQNqEGkyui6oG+vmsIunUaEc3SK5Ut2HR5hw+hknMxn6o=}"
     maxAttachmentSize: -1
-    maxAttachmentSizeMb: -1
+    maxAttachmentSizeMb: 0
     precedenceBulk: false
+    useSsl: false
     watchingEnabled: false
-  fingerprints:
-    fingerprintCleanupDisabled: false
-    storage: "file"
   gitHubConfiguration:
     apiRateLimitChecker: ThrottleForNormalize
-  gitHubPluginConfig:
-    hookUrl: "http://localhost:8080/github-webhook/"
   gitSCM:
-    addGitTagAction: false
-    allowSecondFetch: false
     createAccountBasedOnEmail: false
-    disableGitToolChooser: false
-    hideCredentials: false
     showEntireCommitSummaryInChanges: false
     useExistingAccountWithSameEmail: false
-  junitTestResultStorage:
-    storage: "file"
+  globalSettings:
+    failOnCorrupt: false
+    noAuthors: false
+    quietMode: false
   location:
-    adminAddress: "Dirección no configurada todavía <nobody@nowhere>"
-    url: "http://localhost:8080/"
+    adminAddress: "address not configured yet <nobody@nowhere>"
+    url: "http://localhost:8000"
   mailer:
     charset: "UTF-8"
     useSsl: false
     useTls: false
+  mavenModuleSet:
+    localRepository: "default"
   pollSCM:
     pollingThreadCount: 10
+  slackNotifier:
+    botUser: false
+    sendAsText: false
   sonarGlobalConfiguration:
     buildWrapperEnabled: true
     installations:
-    - name: "sonarqube"
+    - credentialsId: "jenkins"
+      name: "sonarqube"
       serverUrl: "http://sonarqube:9000"
       triggers:
         skipScmCause: false
         skipUpstreamCause: false
-  timestamper:
+  timestamperConfig:
     allPipelines: false
     elapsedTimeFormat: "'<b>'HH:mm:ss.S'</b> '"
     systemTimeFormat: "'<b>'HH:mm:ss'</b> '"
+  upstream:
+    globalUpstreamFilterStrategy: UseOldest
 tool:
   git:
     installations:
     - home: "git"
       name: "Default"
-  mavenGlobalConfig:
-    globalSettingsProvider: "standard"
-    settingsProvider: "standard"
