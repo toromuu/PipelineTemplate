@@ -31,6 +31,10 @@ services:
       - ./sonarqube/volume/sonarqube_conff:/opt/sonarqube/conf
       - ./sonarqube/volume/sonarqube_dataa:/opt/sonarqube/data
       - ./sonarqube/volume/sonarqube_extensionss:/opt/sonarqube/extensions
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
 
   db:
     image: postgres
