@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # https://github.com/ICTU/sonar.git
 
 if [[ -n $SONARQUBE_TOKEN ]]; then

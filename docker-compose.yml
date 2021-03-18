@@ -48,6 +48,8 @@ services:
       build:
           context: ./jenkins
       container_name: jenkins
+      privileged: true
+      user: root
       networks:
           - mynetwork
       volumes:
