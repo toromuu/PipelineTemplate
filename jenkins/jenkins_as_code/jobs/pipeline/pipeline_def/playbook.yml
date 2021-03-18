@@ -88,7 +88,7 @@
   #Copy de proyect
   - name: Copy file with owner and permissions
     copy:
-      src: ./
+      src: ../workspace/
       dest: /home/ubuntu/proyect/
 
   - name: Run `docker-compose up`

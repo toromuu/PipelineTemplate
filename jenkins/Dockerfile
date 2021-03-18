@@ -1,8 +1,8 @@
 FROM jenkins/jenkins
 
-
+USER root
 #AVOID INITIAL CONFIGURATION
-ENV JAVA_OPTS -Djenkins.install.runSetupWizard=true
+ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false
 
 ENV JENKINS_HOME /var/jenkins_home
 
@@ -13,7 +13,7 @@ COPY ./jenkins_as_code/jobs/ /var/jenkins_home
 
 
 #INSTALL ANSIBLE
-RUN apt-get install python3-pip -y && \
+RUN apt-get -y update && apt-get install python3-pip -y && \
     pip3 install ansible --upgrade
 
 RUN mkdir /ansible && \

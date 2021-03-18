@@ -13,7 +13,8 @@ env.AWS_SECRET_ACCESS_KEY = AWS_SECRET_ACCESS_KEY
 node {
   
   stage('GitSCM'){
-       git branch: 'deploy', url: 'file:///var/lib/jenkins/repo'
+      git branch: 'deploy', url: 'file:///var/lib/jenkins/repo'
+
   }
 
   stage("build & SonarQube analysis") {
@@ -39,38 +40,49 @@ node {
   }
 
   stage ('Clean') {
-      sh '''#!/bin/bash
+        dir('../pipeline_def') {
+           sh '''#!/bin/bash
             if [ -f inventory.txt ]
             then
               rm -rf inventory.txt
             fi
          '''
+        }
   }
  
   stage ('Terraform Plan') {
-    sh 'terraform init'
-    sh 'terraform plan -no-color -out=create.tfplan'
+    dir('../pipeline_def') {
+      sh 'terraform init'
+      sh 'terraform plan -no-color -out=create.tfplan'
+    }
+    
   }
 
   stage ('Terraform Apply') {
-    sh 'terraform apply -no-color -auto-approve create.tfplan'
+    dir('../pipeline_def') {
+      sh 'terraform apply -no-color -auto-approve create.tfplan'
+    }
   }
 
   stage ('WAIT TO DEPLOY AWS') {
     sleep 30
-    sh 'terraform show'
+    dir('../pipeline_def') {
+        sh 'terraform show'
+    }
   }
 
   stage ('Ansible') {
-      sh '''#!/bin/bash
+      dir('../pipeline_def') {
+        sh '''#!/bin/bash  
             chmod 400 jenkins.pem
             touch inventory.txt
             cat hosts.txt | while read line 
             do
               echo "aws ansible_ssh_user=ubuntu ansible_ssh_private_key_file=jenkins.pem ansible_host=$line" > inventory.txt   
             done
-            ansible-playbook playbook.yml -i inventory.txt
+            .ansible-playbook playbook.yml -i inventory.txt
          '''
+      }
   }
  
     stage ('Notification') {

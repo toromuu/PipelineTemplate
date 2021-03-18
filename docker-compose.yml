@@ -3,7 +3,7 @@ services:
 
   vscoderemote:
     build:
-      context: ./.devcontainer
+      context: ./app-workspace/.devcontainer
     container_name: VScodeDevRemoteContainer
     ports:     
       - "3000:3000"
@@ -53,7 +53,6 @@ services:
       volumes:
           - ./jenkins/jenkins_home:/var/jenkins_home
           - ./jenkins/jenkins_as_code/conf:/var/jenkins_conf
-          - ./jenkins/pipeline_def:/var/jenkins_home/workspace
           - ./app-workspace:/var/lib/jenkins/repo
       ports:
           - "8080:8080"
