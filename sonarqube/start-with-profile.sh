@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# https://github.com/ICTU/sonar.git
+#From https://github.com/ICTU/sonar AGL 2.0
 
 if [[ -n $SONARQUBE_TOKEN ]]; then
     BASIC_AUTH="$SONARQUBE_TOKEN:"
@@ -11,6 +11,27 @@ fi
 # Access SonarQube api with admin credentials
 function curlAdmin {
     curl -v -u "$BASIC_AUTH" "$@"
+}
+
+function createJenkinsWebhook {
+  curlAdmin -X POST "$BASE_URL/api/webhooks/create" -d "name=jenkins&url=http://jenkins:8080/sonarqube-webhook/"
+}
+
+function generateSQToken { 
+    echo "Waiting for jenkins connection on jenkins:8080"
+    until timeout 1 bash -c "cat < /dev/null > /dev/tcp/jenkins/8080"
+    do
+        echo "Waiting for jenkins connection..."
+        # wait for 5 seconds before check again
+        sleep 5
+    done
+
+token=$(curlAdmin -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "name=jenkins"  "$BASE_URL/api/user_tokens/generate" | jq -r '.token' | xargs)
+echo "Jenkins token generated $token"
+COOKIEJAR="$(mktemp)"
+CRUMB=$(curlAdmin --cookie-jar "$COOKIEJAR" "http://jenkins:8080/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,%22:%22,//crumb)")
+curlAdmin -X POST --cookie "$COOKIEJAR" -H "$CRUMB" "http://jenkins:8080/credentials/store/system/domain/_/createCredentials" --data-urlencode 'json={"": "0","credentials": {"scope": "GLOBAL","id": "jenkins","description": "Automatically generated sonar token from windows","secret": "'"$token"'", "$class": "org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl"}}'
+
 }
 
 # Check if the database is ready for connections
@@ -24,43 +45,24 @@ function waitForDatabase {
         return
     fi
     echo "Waiting for database connection on $host:$port"
-    local count=0
-    local sleep=5
-    local timeout=${DB_START_TIMEOUT:-60}
-    until pg_isready -h "$host" -p "$port" ${SONAR_JDBC_USERNAME:+-U "$SONAR_JDBC_USERNAME"}
+    until timeout 1 bash -c "cat < /dev/null > /dev/tcp/$host/$port"
     do
-        if [[ count -gt timeout ]]
-        then
-            echo "ERROR: Failed to start database within $timeout seconds"
-            exit 1
-        fi
         echo "Waiting for database connection..."
         # wait for 5 seconds before check again
-        sleep $sleep
-        count=$((count+sleep))
+        sleep 5
     done
     echo "Database listening on ${HOSTPORT}"
 }
 
 # Wait until SonarQube is operational
 function waitForSonarUp {
-    local count=0
-    local sleep=5
-    local timeout=${SONAR_START_TIMEOUT:-600}
     # Wait for server to be up
-    until [[ "$status" == "UP" ]]
+    while [ "$status" != "UP" ]
     do
-        if [[ count -gt timeout ]]
-        then
-            echo "ERROR: Failed to start Sonar within $timeout seconds"
-            exit 1
-        fi
         status=$(curl -s -f "$BASE_URL/api/system/status" | jq -r '.status')
         echo "Waiting for sonar to come up: $status"
-        sleep $sleep
-        count=$((count+sleep))
+        sleep 5
     done
-    echo "Sonar is started"
 }
 
 # Try to change the default admin password to the one provided in SONARQUBE_PASSWORD
@@ -213,7 +215,8 @@ function createProfile {
 ###########################################################################################################################
 # Main
 ###########################################################################################################################
-BASE_URL=http://127.0.0.1:9000
+BASE_URL=http://sonarqube:9000
+
 
 # waitForDatabase
 if [ "$SONARQUBE_JDBC_URL" ]; then
@@ -240,7 +243,12 @@ changeDefaultAdminPassword
 
 testAdminCredentials
 
-# (Re-)create the ICTU profiles
+createJenkinsWebhook
+generateSQToken
+
+
+# (Re-)create the profiles
+
 createProfile "cs-profile-v8.18.0" "Sonar%20way" "cs"
 createProfile "py-profile-v3.2.0" "Sonar%20way" "py"
 
