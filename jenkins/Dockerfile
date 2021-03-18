@@ -9,7 +9,7 @@ ENV JENKINS_HOME /var/jenkins_home
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
 RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
 
-COPY ./jenkins_as_code/jobs/ /var/jenkins_home
+COPY ./jenkins_as_code/jobs /var/jenkins_home
 
 
 #INSTALL ANSIBLE
