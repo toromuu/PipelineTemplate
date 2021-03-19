@@ -8,10 +8,7 @@ git clone $repository  $workspace
 
 # Add devcontainer, Jenkinsfile and post-commit files
 
-if(![System.IO.File]::Exists(./.devcontainer)){
-    throw "Clone already done."
-}
-else {
+if (Test-Path ./.devcontainer) {
     mv ./.devcontainer ./${workspace}/
     mv ./post-commit ./${workspace}/.git/hooks/
 }
