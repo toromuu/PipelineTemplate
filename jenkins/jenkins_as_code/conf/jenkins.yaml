@@ -2,6 +2,9 @@ jenkins:
   agentProtocols:
   - "JNLP4-connect"
   - "Ping"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
   crumbIssuer:
     standard:
       excludeClientIPFromCrumb: false
@@ -11,7 +14,7 @@ jenkins:
   markupFormatter: "plainText"
   mode: NORMAL
   myViewsTabBar: "standard"
-  numExecutors: 4
+  numExecutors: 2
   primaryView:
     all:
       name: "all"
@@ -19,7 +22,7 @@ jenkins:
   quietPeriod: 5
   remotingSecurity:
     enabled: false
-  scmCheckoutRetryCount: 2
+  scmCheckoutRetryCount: 0
   slaveAgentPort: 50000
   updateCenter:
     sites:
@@ -40,11 +43,9 @@ unclassified:
   buildDiscarders:
     configuredBuildDiscarders:
     - "jobBuildDiscarder"
-  defaultFolderConfiguration:
-    healthMetrics:
-    - worstChildHealthMetric:
-        recursive: true
-  extendedEmailPublisher:
+  buildStepOperation:
+    enabled: false
+  email-ext:
     adminRequiredForTemplateTesting: false
     allowUnregisteredEnabled: false
     charset: "UTF-8"
@@ -55,23 +56,34 @@ unclassified:
       Check console output at $BUILD_URL to view the results.
     defaultContentType: "text/plain"
     defaultSubject: "$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!"
+    defaultTriggerIds:
+    - "hudson.plugins.emailext.plugins.trigger.FailureTrigger"
+    mailAccount:
+      smtpPassword: "{AQAAABAAAAAQNqEGkyui6oG+vmsIunUaEc3SK5Ut2HR5hw+hknMxn6o=}"
     maxAttachmentSize: -1
-    maxAttachmentSizeMb: 0
+    maxAttachmentSizeMb: -1
     precedenceBulk: false
     watchingEnabled: false
+  fingerprints:
+    fingerprintCleanupDisabled: false
+    storage: "file"
   gitHubConfiguration:
     apiRateLimitChecker: ThrottleForNormalize
+  gitHubPluginConfig:
+    hookUrl: "http://localhost:8080/github-webhook/"
   gitSCM:
+    addGitTagAction: false
+    allowSecondFetch: false
     createAccountBasedOnEmail: false
+    disableGitToolChooser: false
+    hideCredentials: false
     showEntireCommitSummaryInChanges: false
     useExistingAccountWithSameEmail: false
-  globalSettings:
-    failOnCorrupt: false
-    noAuthors: false
-    quietMode: false
+  junitTestResultStorage:
+    storage: "file"
   location:
-    adminAddress: "address not configured yet <nobody@nowhere>"
-    url: "http://localhost:8000"
+    adminAddress: "Dirección no configurada todavía <nobody@nowhere>"
+    url: "http://localhost:8080/"
   mailer:
     charset: "UTF-8"
     useSsl: false
@@ -81,13 +93,13 @@ unclassified:
   sonarGlobalConfiguration:
     buildWrapperEnabled: true
     installations:
-    - credentialsId: "jenkins"
-      name: "sonarqube"
-      serverUrl: "http://127.0.0.1:9000"
+    - name: "sonarqube"
+      credentialsId: "jenkins"
+      serverUrl: "http://sonarqube:9000"
       triggers:
         skipScmCause: false
         skipUpstreamCause: false
-  timestamperConfig:
+  timestamper:
     allPipelines: false
     elapsedTimeFormat: "'<b>'HH:mm:ss.S'</b> '"
     systemTimeFormat: "'<b>'HH:mm:ss'</b> '"
@@ -96,11 +108,7 @@ tool:
     installations:
     - home: "git"
       name: "Default"
-  sonarRunnerInstallation:
-    installations:
-    - name: "sonarqube"
-      properties:
-      - installSource:
-          installers:
-          - sonarRunnerInstaller:
-              id: "4.6.0.2311"
+  mavenGlobalConfig:
+    globalSettingsProvider: "standard"
+    settingsProvider: "standard"
+

@@ -13,6 +13,7 @@ if (Test-Path ./.devcontainer) {
     mv ./post-commit ./${workspace}/.git/hooks/
 }
 
+powershell wsl -d docker-desktop "sysctl -w vm.max_map_count=262144"
 
 docker-compose build
 
