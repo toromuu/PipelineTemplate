@@ -74,7 +74,7 @@ unclassified:
     defaultTriggerIds:
     - "hudson.plugins.emailext.plugins.trigger.FailureTrigger"
     mailAccount:
-      smtpPassword: "{AQAAABAAAAAQGP6XYkHXZtp2p1YglvJcaiiw6WrsgAqzepYeojNdPFU=}"
+      smtpPassword: "{AQAAABAAAAAQBExef6uYSx7p2iQ7nBsHtkYBQo0dar0nYjub1cy8gik=}"
     maxAttachmentSize: -1
     maxAttachmentSizeMb: -1
     precedenceBulk: false
@@ -106,7 +106,7 @@ unclassified:
   pollSCM:
     pollingThreadCount: 10
   sonarGlobalConfiguration:
-    buildWrapperEnabled: false
+    buildWrapperEnabled: true
     installations:
     - name: "sonarqube"
       credentialsId: "jenkins"
