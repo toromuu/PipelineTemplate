@@ -90,6 +90,7 @@ unclassified:
     buildWrapperEnabled: true
     installations:
     - name: "sonarqube"
+      credentialsId: "jenkins"
       serverUrl: "http://127.0.0.1:9000"
       triggers:
         skipScmCause: false
