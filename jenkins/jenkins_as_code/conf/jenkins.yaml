@@ -83,7 +83,7 @@ unclassified:
     installations:
     - credentialsId: "jenkins"
       name: "sonarqube"
-      serverUrl: "http://sonarqube:9000"
+      serverUrl: "http://127.0.0.1:9000"
       triggers:
         skipScmCause: false
         skipUpstreamCause: false
