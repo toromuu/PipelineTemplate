@@ -62,7 +62,7 @@ services:
           - ./app-workspace:/var/lib/jenkins/repo
           - ./jenkins/jenkins_as_code/jobs/:/var/jenkins_home/jobs/
       ports:
-          - "8080:8080"
+          - "8000:8080"
       environment:
       - CASC_JENKINS_CONFIG=/var/jenkins_conf
 
