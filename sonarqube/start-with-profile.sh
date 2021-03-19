@@ -237,7 +237,7 @@ PID=$!
 
 waitForSonarUp
 
-#changeDefaultAdminPassword
+changeDefaultAdminPassword
 
 testAdminCredentials
 
