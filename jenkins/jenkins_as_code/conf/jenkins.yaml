@@ -21,8 +21,23 @@ jenkins:
   projectNamingStrategy: "standard"
   quietPeriod: 5
   remotingSecurity:
-    enabled: false
+    enabled: true
   scmCheckoutRetryCount: 0
+  securityRealm:
+    local:
+      allowsSignup: false
+      enableCaptcha: false
+      users:
+      - id: "admin1"
+        name: "admin1"
+        properties:
+        - "myView"
+        - preferredProvider:
+            providerId: "default"
+        - "timezone"
+        - mailer:
+            emailAddress: "admin1@capge.es"
+        - "apiToken"
   slaveAgentPort: 50000
   updateCenter:
     sites:
@@ -59,7 +74,7 @@ unclassified:
     defaultTriggerIds:
     - "hudson.plugins.emailext.plugins.trigger.FailureTrigger"
     mailAccount:
-      smtpPassword: "{AQAAABAAAAAQNqEGkyui6oG+vmsIunUaEc3SK5Ut2HR5hw+hknMxn6o=}"
+      smtpPassword: "{AQAAABAAAAAQGP6XYkHXZtp2p1YglvJcaiiw6WrsgAqzepYeojNdPFU=}"
     maxAttachmentSize: -1
     maxAttachmentSizeMb: -1
     precedenceBulk: false
@@ -91,7 +106,7 @@ unclassified:
   pollSCM:
     pollingThreadCount: 10
   sonarGlobalConfiguration:
-    buildWrapperEnabled: true
+    buildWrapperEnabled: false
     installations:
     - name: "sonarqube"
       credentialsId: "jenkins"
@@ -111,4 +126,3 @@ tool:
   mavenGlobalConfig:
     globalSettingsProvider: "standard"
     settingsProvider: "standard"
-
