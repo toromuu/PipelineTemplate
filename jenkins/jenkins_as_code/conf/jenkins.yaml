@@ -4,13 +4,11 @@ jenkins:
   - "Ping"
   crumbIssuer:
     standard:
-      excludeClientIPFromCrumb: true
+      excludeClientIPFromCrumb: false
   disableRememberMe: false
   labelAtoms:
   - name: "master"
-  markupFormatter:
-    rawHtml:
-      disableSyntaxHighlighting: false
+  markupFormatter: "plainText"
   mode: NORMAL
   myViewsTabBar: "standard"
   numExecutors: 4
@@ -51,14 +49,15 @@ unclassified:
     allowUnregisteredEnabled: false
     charset: "UTF-8"
     debugMode: false
-    defaultBody: "$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS:\r\n\r\nCheck\
-      \ console output at $BUILD_URL to view the results."
+    defaultBody: |-
+      $PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS:
+
+      Check console output at $BUILD_URL to view the results.
     defaultContentType: "text/plain"
     defaultSubject: "$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!"
     maxAttachmentSize: -1
     maxAttachmentSizeMb: 0
     precedenceBulk: false
-    useSsl: false
     watchingEnabled: false
   gitHubConfiguration:
     apiRateLimitChecker: ThrottleForNormalize
@@ -77,13 +76,8 @@ unclassified:
     charset: "UTF-8"
     useSsl: false
     useTls: false
-  mavenModuleSet:
-    localRepository: "default"
   pollSCM:
     pollingThreadCount: 10
-  slackNotifier:
-    botUser: false
-    sendAsText: false
   sonarGlobalConfiguration:
     buildWrapperEnabled: true
     installations:
@@ -97,22 +91,11 @@ unclassified:
     allPipelines: false
     elapsedTimeFormat: "'<b>'HH:mm:ss.S'</b> '"
     systemTimeFormat: "'<b>'HH:mm:ss'</b> '"
-  upstream:
-    globalUpstreamFilterStrategy: UseOldest
 tool:
   git:
     installations:
     - home: "git"
       name: "Default"
-  nodejs:
-    installations:
-    - name: "Node 12.16 LTS"
-      properties:
-      - installSource:
-          installers:
-          - nodeJSInstaller:
-              id: "12.16.0"
-              npmPackagesRefreshHours: 72
   sonarRunnerInstallation:
     installations:
     - name: "sonarqube"
