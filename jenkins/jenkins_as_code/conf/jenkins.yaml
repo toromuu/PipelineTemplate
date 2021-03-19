@@ -21,7 +21,7 @@ jenkins:
   projectNamingStrategy: "standard"
   quietPeriod: 5
   remotingSecurity:
-    enabled: true
+    enabled: false
   scmCheckoutRetryCount: 0
   securityRealm:
     local:
