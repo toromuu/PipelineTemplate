@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#From https://github.com/ICTU/sonar AGL 2.0
-
 if [[ -n $SONARQUBE_TOKEN ]]; then
     BASIC_AUTH="$SONARQUBE_TOKEN:"
 else
@@ -239,7 +237,7 @@ PID=$!
 
 waitForSonarUp
 
-changeDefaultAdminPassword
+#changeDefaultAdminPassword
 
 testAdminCredentials
 
