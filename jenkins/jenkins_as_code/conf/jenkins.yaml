@@ -90,7 +90,7 @@ unclassified:
     buildWrapperEnabled: true
     installations:
     - name: "sonarqube"
-      serverUrl: "http://sonarqube:9000"
+      serverUrl: "http://127.0.0.1:9000"
       triggers:
         skipScmCause: false
         skipUpstreamCause: false
@@ -106,3 +106,12 @@ tool:
   mavenGlobalConfig:
     globalSettingsProvider: "standard"
     settingsProvider: "standard"
+  sonarRunnerInstallation:
+    installations:
+    - name: "sonarqube"
+      properties:
+      - installSource:
+          installers:
+          - sonarRunnerInstaller:
+              id: "4.6.0.2311"
+  
