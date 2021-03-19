@@ -21,7 +21,7 @@ jenkins:
   projectNamingStrategy: "standard"
   quietPeriod: 5
   remotingSecurity:
-    enabled: false
+    enabled: true
   scmCheckoutRetryCount: 0
   slaveAgentPort: 50000
   updateCenter:
