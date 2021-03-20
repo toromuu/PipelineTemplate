@@ -89,7 +89,7 @@ node {
   }
 
   stage (&apos;WAIT TO DEPLOY AWS&apos;) {
-    sleep 30
+    sleep 200
     dir(&apos;../pipeline_def&apos;) {
         sh &apos;terraform show&apos;
     }
