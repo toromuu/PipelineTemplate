@@ -11,18 +11,6 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>AWS_ACCESS_KEY_ID</name>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>AWS_SECRET_ACCESS_KEY</name>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers/>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
@@ -30,24 +18,23 @@
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.80">
     <script>#!groovy
 
-// Build Parameters
-properties([ parameters([
-  string( name: &apos;AWS_ACCESS_KEY_ID&apos;, defaultValue: &apos;&apos;),
-  string( name: &apos;AWS_SECRET_ACCESS_KEY&apos;, defaultValue: &apos;&apos;)
-]), pipelineTriggers([]) ])
+environment {
+        AWS_ACCESS_KEY_ID     = credentials(&apos;AWS_ACCESS_KEY_ID&apos;)
+        AWS_SECRET_ACCESS_KEY = credentials(&apos;AWS_SECRET_ACCESS_KEY&apos;)
+}
 
-// Environment Variables
-env.AWS_ACCESS_KEY_ID = AWS_ACCESS_KEY_ID
-env.AWS_SECRET_ACCESS_KEY = AWS_SECRET_ACCESS_KEY
-
-node {
-  
+node { 
+    
   stage(&apos;GitSCM&apos;){
       git branch: &apos;deploy&apos;, url: &apos;file:///var/lib/jenkins/repo&apos;
-
+  }
+  
+  stage(&apos;Loading Custom Tools&apos;) {
+        def node = tool name: &apos;Node 12.16 LTS&apos;, type: &apos;jenkins.plugins.nodejs.tools.NodeJSInstallation&apos;
+        env.PATH = &quot;${node}/bin:${env.PATH}&quot;
   }
 
-  stage(&quot;build &amp; SonarQube analysis&quot;) {
+  stage(&quot;SonarQube analysis&quot;) {
         def scannerHome = tool &quot;sonarqube&quot;
             withSonarQubeEnv(&quot;sonarqube&quot;) {
                 sh &quot;&quot;&quot;
@@ -88,11 +75,11 @@ node {
     }
   }
 
-  stage (&apos;WAIT TO DEPLOY AWS&apos;) {
-    sleep 200
+  stage (&apos;Deploying AWS&apos;) {
     dir(&apos;../pipeline_def&apos;) {
         sh &apos;terraform show&apos;
     }
+    sleep 200
   }
 
   stage (&apos;Ansible&apos;) {

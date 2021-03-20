@@ -55,7 +55,7 @@ resource "aws_security_group" "allow_ssh" {
 }
 
 resource "aws_instance" "pipeline" {
-  ami                    = data.aws_ami.aws-linux.id
+  ami                    = data.aws_ami.aws-ubuntu.id
   instance_type          = var.INSTANCE_TYPE
   key_name               = var.KEY_NAME
   vpc_security_group_ids = [aws_security_group.allow_ssh.id]
