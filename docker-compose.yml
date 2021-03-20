@@ -8,7 +8,7 @@ services:
     ports:     
       - "3000:3000"
     volumes:
-      - ./app-workspace:/workspace/
+      - ./app-workspace/.:/workspace/
     tty: true
     networks:
       - mynetwork
@@ -28,10 +28,9 @@ services:
       - SONARQUBE_JDBC_USERNAME=sonar
       - SONARQUBE_JDBC_PASSWORD=sonar
     volumes:
-      - ./volumes/sonarqube/conf:/opt/sonarqube/conf
-      - ./volumes/sonarqube/data:/opt/sonarqube/data
-      - ./volumes/sonarqube/extensions:/opt/sonarqube/extensions
-      - ./volumes/sonarqube/lib/bundled-plugins:/opt/sonarqube/lib/bundled-plugins
+      - ./sonarqube/volume/sonarqube_conff:/opt/sonarqube/conf
+      - ./sonarqube/volume/sonarqube_dataa:/opt/sonarqube/data
+      - ./sonarqube/volume/sonarqube_extensionss:/opt/sonarqube/extensions
     ulimits:
       nofile:
         soft: 65536
@@ -45,9 +44,9 @@ services:
     environment:
       - POSTGRES_USER=sonar
       - POSTGRES_PASSWORD=sonar
-      - PGDATA=/var/lib/postgresql/data
     volumes:
-      - ./volumes/sonarqube-db/data:/var/lib/postgresql/data
+      - ./postgre/volume/postgresqll:/var/lib/postgresql
+      - ./postgre/volume/postgresql_dataa:/var/lib/postgresql/data
 
   jenkins:
       build:
@@ -58,10 +57,9 @@ services:
       networks:
           - mynetwork
       volumes:
-          - ./volumes/jenkins/jenkins_home:/var/jenkins_home
+          - ./jenkins/jenkins_home:/var/jenkins_home
           - ./jenkins/jenkins_as_code/conf:/var/jenkins_conf
           - ./app-workspace:/var/lib/jenkins/repo
-          - /var/run/docker.sock:/var/run/docker.sock
           - ./jenkins/jenkins_as_code/jobs/:/var/jenkins_home/jobs/
       ports:
           - "8000:8080"
