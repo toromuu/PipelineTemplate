@@ -1,4 +1,4 @@
 #!/bin/sh
 if [ `git rev-parse --abbrev-ref HEAD` == "deploy" ]; then
-curl http://localhost:8080/job/pipeline/build
+curl http://localhost:8000/job/pipeline/build
 fi
