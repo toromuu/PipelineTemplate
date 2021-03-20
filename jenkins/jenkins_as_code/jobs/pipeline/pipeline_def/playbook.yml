@@ -88,9 +88,9 @@
   - name: Copy file with owner and permissions
     copy:
       src: /var/lib/jenkins/repo
-      dest: /home/ubuntu/proyect
+      dest: /home/ubuntu/
 
   - name: Run `docker-compose up`
     shell:
       cmd: "docker-compose up -d"
-      chdir: /home/ubuntu/proyect
+      chdir: /home/ubuntu/repo

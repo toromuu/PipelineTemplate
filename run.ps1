@@ -14,6 +14,8 @@ if (Test-Path ./.devcontainer) {
     mv ./post-commit ./${workspace}/.git/hooks/
 }
 
+mv ./jenkins.pem ./jenkins/jenkins_as_code/jobs/pipeline/pipeline_def/
+
 powershell wsl -d docker-desktop "sysctl -w vm.max_map_count=262144"
 
 docker-compose build
