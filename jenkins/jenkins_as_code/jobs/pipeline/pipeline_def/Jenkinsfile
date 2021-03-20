@@ -1,23 +1,26 @@
 #!groovy
 
-// Build Parameters
-properties([ parameters([
-  string( name: 'AWS_ACCESS_KEY_ID', defaultValue: ''),
-  string( name: 'AWS_SECRET_ACCESS_KEY', defaultValue: '')
-]), pipelineTriggers([]) ])
+environment {
+        AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        env.AWS_ACCESS_KEY_ID = AWS_ACCESS_KEY_ID
+        env.AWS_SECRET_ACCESS_KEY = AWS_SECRET_ACCESS_KEY
+}
 
-// Environment Variables
-env.AWS_ACCESS_KEY_ID = AWS_ACCESS_KEY_ID
-env.AWS_SECRET_ACCESS_KEY = AWS_SECRET_ACCESS_KEY
 
-node {
-  
+
+node { 
+    
   stage('GitSCM'){
       git branch: 'deploy', url: 'file:///var/lib/jenkins/repo'
-
+  }
+  
+  stage('Loading Custom Tools') {
+        def node = tool name: 'Node 12.16 LTS', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
+        env.PATH = "${node}/bin:${env.PATH}"
   }
 
-  stage("build & SonarQube analysis") {
+  stage("SonarQube analysis") {
         def scannerHome = tool "sonarqube"
             withSonarQubeEnv("sonarqube") {
                 sh """
@@ -25,19 +28,13 @@ node {
                         -Dsonar.projectKey='appworkspace' \
                         -Dsonar.projectName='appworkspace' \
                         -Dsonar.projectVersion='1.0.0' \
+                        -Dsonar.login=admin \
+                        -Dsonar.password=admin \
                         -Dsonar.sources='src'
                 """
       }
   }
       
-  stage("Quality Gate"){
-        timeout(time: 1, unit: 'HOURS') {
-            def qg = waitForQualityGate()
-            if (qg.status != 'OK') {
-                error "Pipeline aborted due to quality gate failure: ${qg.status}"
-            }
-        }
-  }
 
   stage ('Clean') {
         dir('../pipeline_def') {
@@ -51,27 +48,38 @@ node {
   }
  
   stage ('Terraform Plan') {
-    dir('../pipeline_def') {
-      sh 'terraform init'
-      sh 'terraform plan -no-color -out=create.tfplan'
+    withCredentials([string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'), 
+                    string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')]) {  
+        dir('../pipeline_def') {
+          sh 'terraform init'
+          sh 'terraform plan -no-color -out=create.tfplan'
+        }
     }
     
   }
 
   stage ('Terraform Apply') {
+    withCredentials([string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'), 
+                    string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')]) {    
     dir('../pipeline_def') {
       sh 'terraform apply -no-color -auto-approve create.tfplan'
     }
-  }
-
-  stage ('WAIT TO DEPLOY AWS') {
-    sleep 30
-    dir('../pipeline_def') {
-        sh 'terraform show'
     }
   }
 
+  stage ('Deploying AWS') {
+     withCredentials([string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'), 
+                    string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')]) {      
+        dir('../pipeline_def') {
+            sh 'terraform show'
+        }
+    }
+    sleep 200
+  }
+
   stage ('Ansible') {
+       withCredentials([string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'), 
+                    string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')]) {    
       dir('../pipeline_def') {
         sh '''#!/bin/bash  
             chmod 400 jenkins.pem
@@ -80,13 +88,11 @@ node {
             do
               echo "aws ansible_ssh_user=ubuntu ansible_ssh_private_key_file=jenkins.pem ansible_host=$line" > inventory.txt   
             done
-            .ansible-playbook playbook.yml -i inventory.txt
+              ansible-playbook playbook.yml -i inventory.txt
          '''
       }
+    }  
   }
  
-    stage ('Notification') {
-    echo "Sent mail notification" 
-  }
-  
+
 }
