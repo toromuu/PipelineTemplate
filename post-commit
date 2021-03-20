@@ -1,4 +1,4 @@
 #!/bin/sh
 if [ `git rev-parse --abbrev-ref HEAD` == "deploy" ]; then
-curl http://jenkins:8000/job/pipeline/1/replay/run
+curl http://jenkins:8000/job/pipeline/build
 fi
