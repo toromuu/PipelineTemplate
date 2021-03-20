@@ -1,7 +1,7 @@
 <?xml version='1.1' encoding='UTF-8'?>
-<flow-definition plugin="workflow-job@2.40">
+<flow-definition plugin="workflow-job@2.39">
   <actions>
-    <org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction plugin="workflow-multibranch@2.22">
+    <org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction plugin="workflow-multibranch@2.21">
       <jobPropertyDescriptors>
         <string>hudson.model.ParametersDefinitionProperty</string>
         <string>org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty</string>
@@ -27,7 +27,7 @@
       <triggers/>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
-  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.90">
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.80">
     <script>#!groovy
 
 // Build Parameters
@@ -55,13 +55,14 @@ node {
                         -Dsonar.projectKey=&apos;appworkspace&apos; \
                         -Dsonar.projectName=&apos;appworkspace&apos; \
                         -Dsonar.projectVersion=&apos;1.0.0&apos; \
-                        -Dsonar.sonar.login=&apos;admin&apos; \
-                        -Dsonar.sonar.password=&apos;admin&apos; \
+                        -Dsonar.login=admin \
+                        -Dsonar.password=admin \
                         -Dsonar.sources=&apos;src&apos;
                 &quot;&quot;&quot;
       }
   }
       
+
   stage (&apos;Clean&apos;) {
         dir(&apos;../pipeline_def&apos;) {
            sh &apos;&apos;&apos;#!/bin/bash
@@ -88,7 +89,7 @@ node {
   }
 
   stage (&apos;WAIT TO DEPLOY AWS&apos;) {
-    sleep 120
+    sleep 30
     dir(&apos;../pipeline_def&apos;) {
         sh &apos;terraform show&apos;
     }
@@ -103,11 +104,12 @@ node {
             do
               echo &quot;aws ansible_ssh_user=ubuntu ansible_ssh_private_key_file=jenkins.pem ansible_host=$line&quot; &gt; inventory.txt   
             done
-            ansible-playbook playbook.yml -i inventory.txt
+              ansible-playbook playbook.yml -i inventory.txt
          &apos;&apos;&apos;
       }
   }
  
+
 }</script>
     <sandbox>true</sandbox>
   </definition>

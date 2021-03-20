@@ -88,10 +88,10 @@
   #Copy de proyect
   - name: Copy file with owner and permissions
     copy:
-      src: ../workspace/
-      dest: /home/ubuntu/proyect/
+      src: /var/lib/jenkins/repo
+      dest: /home/ubuntu/proyect
 
   - name: Run `docker-compose up`
     shell:
       cmd: "docker-compose up -d"
-      chdir: /home/ubuntu/proyect/
+      chdir: /home/ubuntu/proyect
