@@ -1,5 +1,5 @@
 ---
-- name: Play1
+- name: Pipeline
   hosts: aws
   become: yes
   tasks:

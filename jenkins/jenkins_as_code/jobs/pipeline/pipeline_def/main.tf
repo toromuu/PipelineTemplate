@@ -1,6 +1,6 @@
 # DATA
 
-data "aws_ami" "aws-linux" {
+data "aws_ami" "aws-ubuntu" {
   most_recent = true
   owners = ["099720109477"]
   filter {
@@ -30,7 +30,7 @@ resource "aws_default_vpc" "default" {
 }
 
 resource "aws_security_group" "allow_ssh" {
-  name        = "nginx"
+  name        = "pipeline"
   description = "Allow ports for nginx demo"
   vpc_id      = aws_default_vpc.default.id
 
@@ -54,7 +54,7 @@ resource "aws_security_group" "allow_ssh" {
   }
 }
 
-resource "aws_instance" "nginx" {
+resource "aws_instance" "pipeline" {
   ami                    = data.aws_ami.aws-linux.id
   instance_type          = var.INSTANCE_TYPE
   key_name               = var.KEY_NAME
@@ -67,11 +67,11 @@ resource "aws_instance" "nginx" {
 
 
   provisioner "local-exec" {
-    command = "echo ${aws_instance.nginx.public_ip} >> hosts.txt"
+    command = "echo ${aws_instance.pipeline.public_ip} >> hosts.txt"
   }
 
 }
 
 output "aws_instance_public_dns" {
-  value = aws_instance.nginx.public_dns
+  value = aws_instance.pipeline.public_dns
 }
