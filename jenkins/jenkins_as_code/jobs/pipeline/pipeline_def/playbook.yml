@@ -56,7 +56,6 @@
       name: docker-ce=18.03.*
       state: present
       update_cache: yes
-    notify: Start docker on boot
     tags:
       - docker
   
