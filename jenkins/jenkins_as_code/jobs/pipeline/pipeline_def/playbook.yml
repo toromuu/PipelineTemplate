@@ -85,10 +85,20 @@
       mode: 'u+x,g+x'
 
   #Copy de proyect
-  - name: Copy file with owner and permissions
+  - name: Copy file
     copy:
       src: /var/lib/jenkins/repo
       dest: /home/ubuntu/
+
+  - name: Run `docker-compose down`
+    shell:
+      cmd: "docker-compose down"
+      chdir: /home/ubuntu/repo
+
+  - name: Run `docker-compose build`
+    shell:
+      cmd: "docker-compose build"
+      chdir: /home/ubuntu/repo
 
   - name: Run `docker-compose up`
     shell:
