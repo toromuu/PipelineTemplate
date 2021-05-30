@@ -68,8 +68,13 @@ unclassified:
     precedenceBulk: false
     useSsl: false
     watchingEnabled: false
+  fingerprints:
+    fingerprintCleanupDisabled: false
+    storage: "file"
   gitHubConfiguration:
     apiRateLimitChecker: ThrottleForNormalize
+  gitHubPluginConfig:
+    hookUrl: "http://localhost:8000/github-webhook/"
   gitSCM:
     createAccountBasedOnEmail: false
     showEntireCommitSummaryInChanges: false
@@ -80,7 +85,7 @@ unclassified:
     quietMode: false
   location:
     adminAddress: "address not configured yet <nobody@nowhere>"
-    url: "http://localhost:8000"
+    url: "http://localhost:8000/"
   mailer:
     charset: "UTF-8"
     useSsl: false

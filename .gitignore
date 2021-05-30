@@ -1,6 +1,4 @@
-jenkins/jenkins_home
-postgre/volume
-sonarqube/volume
+volumes/
 jenkins/jenkins_as_code/jobs/pipeline/builds
 jenkins/jenkins_as_code/jobs/pipeline/nextBuildNumber
 jenkins/jenkins_as_code/jobs/pipeline/pipeline_def/jenkins.pem
