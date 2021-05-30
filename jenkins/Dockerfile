@@ -5,7 +5,7 @@ ARG HOST_GID=999
 
 USER root
 
-#AVOID INITIAL CONFIGURATION
+# AVOID INITIAL CONFIGURATION
 ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false
 
 ENV JENKINS_HOME /var/jenkins_home
@@ -16,7 +16,7 @@ RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
 # COPY PIPELINE CONFIGURATION
 COPY ./jenkins_as_code/jobs /var/jenkins_home/
 
-#INSTALL ANSIBLE
+ #INSTALL ANSIBLE
 
 RUN apt-get -y update && apt-get install python3-pip -y && \
     pip3 install ansible --upgrade
@@ -24,7 +24,7 @@ RUN apt-get -y update && apt-get install python3-pip -y && \
 RUN mkdir /ansible && \
     mkdir -p /etc/ansible
 
-#INSTALL PYTHON
+# INSTALL PYTHON
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.5 \
@@ -32,10 +32,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-#INSTALL DJANGO
+# INSTALL DJANGO
 RUN pip3 install Django psycopg2-binary Pillow requests
 
-#INSTALL TERRAFORM
+# INSTALL TERRAFORM
 
 # Download terraform for linux
 RUN wget https://releases.hashicorp.com/terraform/0.14.7/terraform_0.14.7_linux_amd64.zip

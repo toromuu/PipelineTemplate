@@ -12,7 +12,7 @@ Function Test-CommandExists
 } 
 
 
-#INSTALL CHOCOLATELY
+# INSTALL CHOCOLATELY
 IF(Test-CommandExists choco){
 	Write-Host "Chocolately is already installed"
 }
@@ -24,7 +24,7 @@ ELSE{
 }
 
 
-#INSTALL GIT
+# INSTALL GIT
 IF(Test-CommandExists git ) {
 	Write-Host "Git is already installed"
 }
@@ -33,7 +33,7 @@ ELSE{
 }
 
 
-#INSTALL WSL2
+# INSTALL WSL2
 IF(Test-CommandExists wsl -l -v) {
 	Write-Host "WSL2 Engine is already installed"
 }
@@ -46,7 +46,7 @@ ELSE{
 	wsl --set-default-version 2
 }
 
-#INSTALL DOCKER-DESKTOP
+# INSTALL DOCKER-DESKTOP
 IF(Test-CommandExists docker --version ) {
 	Write-Host "Docker-Desktop is already installed"
 }
@@ -57,7 +57,7 @@ ELSE{
 }
 
 
-#INSTALAR VSCODE
+# INSTALL VSCODE
 IF(Test-CommandExists code --version ) {
 	Write-Host "VSCODE is already installed"
 	code --install-extension ms-vscode-remote.remote-containers
@@ -67,11 +67,6 @@ ELSE{
 	$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 	code --install-extension ms-vscode-remote.remote-containers
 }
-
-
-# increase max map count for sonarQube
-
-powershell wsl -d docker-desktop "sysctl -w vm.max_map_count=262144"
 
 
 Restart-Computer

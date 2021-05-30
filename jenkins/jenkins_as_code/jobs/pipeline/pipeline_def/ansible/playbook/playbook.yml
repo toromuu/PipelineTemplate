@@ -3,6 +3,7 @@
   hosts: aws
   become: yes
   tasks:
+
   # sudo apt-get install *
   - name: Install docker packages
     apt:
@@ -83,25 +84,25 @@
       dest: /usr/local/bin/docker-compose
       mode: 'u+x,g+x'
 
-  #Copy de proyect
+  # Copy de proyect-artifact
   - name: Copy file
     copy:
       src: /var/lib/jenkins/repo
       dest: /home/ubuntu/
 
-  #Clean
+  # Clean
   - name: Run `docker-compose down`
     shell:
       cmd: "docker-compose down"
       chdir: /home/ubuntu/repo
 
-  #Build
+  # Build
   - name: Run `docker-compose build`
     shell:
       cmd: "docker-compose build"
       chdir: /home/ubuntu/repo
       
-  #Up
+  # Up
   - name: Run `docker-compose up`
     shell:
       cmd: "docker-compose up -d"
