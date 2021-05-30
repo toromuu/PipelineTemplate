@@ -59,7 +59,7 @@ services:
       - ./volumes/jenkins/jenkins_home:/var/jenkins_home
       - ./jenkins/jenkins_as_code/conf:/var/jenkins_conf
       - ./app-workspace:/var/lib/jenkins/repo
-      - ./app-workspace/src:/var/jenkins_home/jobs/pipeline/pipelinedef/src
+      - ./app-workspace/src:/var/jenkins_home/jobs/pipeline/pipeline_def/src
       - ./jenkins/jenkins_as_code/jobs/:/var/jenkins_home/jobs/
       - ./jenkins/jenkins_as_code/ansible_cfg/:/etc/ansible/
     ports:
