@@ -1,4 +1,4 @@
-FROM jenkins/jenkins
+FROM jenkins/jenkins:2.263.1
 
 ARG HOST_UID=1004
 ARG HOST_GID=999
@@ -52,6 +52,7 @@ RUN mv terraform /usr/local/bin/
 # Check that it's installed
 RUN terraform --version 
 
-
+#  Copy Unit test
+COPY ./app-workspace/src/ /var/jenkins_home/jobs/pipeline/pipelinedef/src
 
 

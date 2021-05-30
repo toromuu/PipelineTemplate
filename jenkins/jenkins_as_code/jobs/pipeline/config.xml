@@ -37,6 +37,14 @@ node {
   stage(&apos;GitSCM&apos;){
       git branch: &apos;deploy&apos;, url: &apos;file:///var/lib/jenkins/repo&apos;
   }
+
+  stage (&apos;UnitTest&apos;) {
+        dir(&apos;../pipeline_def/src&apos;) {
+           sh &apos;&apos;&apos;#!/bin/bash
+            python3 ./manage.py test ./tests
+         &apos;&apos;&apos;
+        }
+  }
   
   stage(&quot;SonarQube analysis&quot;) {
         def scannerHome = tool &quot;sonarqube&quot;

@@ -112,15 +112,6 @@ tool:
     installations:
     - home: "git"
       name: "Default"
-  nodejs:
-    installations:
-    - name: "Node 12.16 LTS"
-      properties:
-      - installSource:
-          installers:
-          - nodeJSInstaller:
-              id: "12.16.0"
-              npmPackagesRefreshHours: 72
   sonarRunnerInstallation:
     installations:
     - name: "sonarqube"
