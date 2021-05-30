@@ -1,9 +1,4 @@
----
-- name: Pipeline
-  hosts: aws
-  become: yes
-  tasks:
-
+  
   # sudo apt-get install *
   - name: Install docker packages
     apt:
@@ -90,16 +85,18 @@
       src: /var/lib/jenkins/repo
       dest: /home/ubuntu/
 
+  #Clean
   - name: Run `docker-compose down`
     shell:
       cmd: "docker-compose down"
       chdir: /home/ubuntu/repo
-
+  #Build
   - name: Run `docker-compose build`
     shell:
       cmd: "docker-compose build"
       chdir: /home/ubuntu/repo
-
+      
+  #Up
   - name: Run `docker-compose up`
     shell:
       cmd: "docker-compose up -d"

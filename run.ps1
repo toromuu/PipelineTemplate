@@ -1,9 +1,23 @@
 #!/usr/bin/env pwsh
 
+Param(
+    [string] $Repo
+)
+
 $repository='https://github.com/toromuu/TourGallery.git'
 
-$workspace='app-workspace'
+if(![string]::IsNullOrEmpty($Repo)){
+$repository=$Repo
+}
 
+if (Test-Path ./jenkins.pem) {
+    mv ./jenkins.pem ./jenkins/jenkins_as_code/jobs/pipeline/pipeline_def/
+} else {
+    Write-Host "Proporcione la clave pem aws"
+    exit
+}
+
+$workspace='app-workspace'
 
 git clone $repository  $workspace
 
@@ -14,7 +28,6 @@ if (Test-Path ./.devcontainer) {
     mv ./post-commit ./${workspace}/.git/hooks/
 }
 
-mv ./jenkins.pem ./jenkins/jenkins_as_code/jobs/pipeline/pipeline_def/
 
 powershell wsl -d docker-desktop "sysctl -w vm.max_map_count=262144"
 

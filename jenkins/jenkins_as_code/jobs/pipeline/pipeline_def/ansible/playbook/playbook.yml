@@ -1,0 +1,7 @@
+---
+- name: Pipeline
+  hosts: aws
+  become: yes
+  roles:
+    - deploy
+

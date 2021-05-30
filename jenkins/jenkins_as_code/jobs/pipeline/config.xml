@@ -38,11 +38,6 @@ node {
       git branch: &apos;deploy&apos;, url: &apos;file:///var/lib/jenkins/repo&apos;
   }
   
-  stage(&apos;Loading Custom Tools&apos;) {
-        def node = tool name: &apos;Node 12.16 LTS&apos;, type: &apos;jenkins.plugins.nodejs.tools.NodeJSInstallation&apos;
-        env.PATH = &quot;${node}/bin:${env.PATH}&quot;
-  }
-
   stage(&quot;SonarQube analysis&quot;) {
         def scannerHome = tool &quot;sonarqube&quot;
             withSonarQubeEnv(&quot;sonarqube&quot;) {
@@ -62,9 +57,9 @@ node {
   stage (&apos;Clean&apos;) {
         dir(&apos;../pipeline_def&apos;) {
            sh &apos;&apos;&apos;#!/bin/bash
-            if [ -f inventory.txt ]
+            if [ -f ./ansible/inventory/inventory.txt ]
             then
-              rm -rf inventory.txt
+              rm -rf ./ansible/inventory/inventory.txt
             fi
          &apos;&apos;&apos;
         }
@@ -73,7 +68,7 @@ node {
   stage (&apos;Terraform Plan&apos;) {
     withCredentials([string(credentialsId: &apos;AWS_ACCESS_KEY_ID&apos;, variable: &apos;AWS_ACCESS_KEY_ID&apos;), 
                     string(credentialsId: &apos;AWS_SECRET_ACCESS_KEY&apos;, variable: &apos;AWS_SECRET_ACCESS_KEY&apos;)]) {  
-        dir(&apos;../pipeline_def&apos;) {
+        dir(&apos;../pipeline_def/terraform&apos;) {
           sh &apos;terraform init&apos;
           sh &apos;terraform plan -no-color -out=create.tfplan&apos;
         }
@@ -84,7 +79,7 @@ node {
   stage (&apos;Terraform Apply&apos;) {
     withCredentials([string(credentialsId: &apos;AWS_ACCESS_KEY_ID&apos;, variable: &apos;AWS_ACCESS_KEY_ID&apos;), 
                     string(credentialsId: &apos;AWS_SECRET_ACCESS_KEY&apos;, variable: &apos;AWS_SECRET_ACCESS_KEY&apos;)]) {    
-    dir(&apos;../pipeline_def&apos;) {
+    dir(&apos;../pipeline_def/terraform&apos;) {
       sh &apos;terraform apply -no-color -auto-approve create.tfplan&apos;
     }
     }
@@ -93,7 +88,7 @@ node {
   stage (&apos;Deploying AWS&apos;) {
      withCredentials([string(credentialsId: &apos;AWS_ACCESS_KEY_ID&apos;, variable: &apos;AWS_ACCESS_KEY_ID&apos;), 
                     string(credentialsId: &apos;AWS_SECRET_ACCESS_KEY&apos;, variable: &apos;AWS_SECRET_ACCESS_KEY&apos;)]) {      
-        dir(&apos;../pipeline_def&apos;) {
+        dir(&apos;../pipeline_def/terraform&apos;) {
             sh &apos;terraform show&apos;
         }
     }
@@ -106,13 +101,13 @@ node {
       dir(&apos;../pipeline_def&apos;) {
         sh &apos;&apos;&apos;#!/bin/bash  
             chmod 400 jenkins.pem
-            touch inventory.txt
-            cat hosts.txt | while read line 
+            touch ./ansible/inventory/inventory.txt
+            cat ./ansible/inventory/hosts.txt | while read line 
             do
-              echo &quot;aws ansible_ssh_user=ubuntu ansible_ssh_private_key_file=jenkins.pem ansible_host=$line&quot; &gt; inventory.txt   
+              echo &quot;aws ansible_ssh_user=ubuntu ansible_ssh_private_key_file=jenkins.pem ansible_host=$line&quot; &gt; ./ansible/inventory/inventory.txt   
             done
               export ANSIBLE_HOST_KEY_CHECKING=False
-              ansible-playbook playbook.yml -i inventory.txt
+              ansible-playbook ./ansible/playbook/playbook.yml -i ./ansible/inventory/inventory.txt
          &apos;&apos;&apos;
       }
     }  

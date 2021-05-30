@@ -1,6 +1,5 @@
 version: "3"
 services:
-
   vscoderemote:
     build:
       context: ./app-workspace/.devcontainer
@@ -11,26 +10,45 @@ services:
       - ./app-workspace/.:/workspace/
     tty: true
     networks:
-      - mynetwork
+      - pipeNet
+
+  jenkins:
+    build:
+      context: ./jenkins
+    container_name: jenkins
+    privileged: true
+    user: root
+    networks:
+        - pipeNet
+    volumes:
+      - ./volumes/jenkins/jenkins_home:/var/jenkins_home
+      - ./jenkins/jenkins_as_code/conf:/var/jenkins_conf
+      - ./app-workspace:/var/lib/jenkins/repo
+      - ./jenkins/jenkins_as_code/jobs/:/var/jenkins_home/jobs/
+      - ./jenkins/jenkins_as_code/ansible_cfg/:/etc/ansible/
+    ports:
+      - "8000:8080"
+    environment:
+      - CASC_JENKINS_CONFIG=/var/jenkins_conf
 
   sonarqube:
     build:
-      context: ./sonarqube
+        context: ./sonarqube
     container_name: sonarqube
     expose:
       - 9000
     ports:
       - "9000:9000"
     networks:
-      - mynetwork
+      - pipeNet
     environment:
       - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
       - SONARQUBE_JDBC_USERNAME=sonar
       - SONARQUBE_JDBC_PASSWORD=sonar
     volumes:
-      - ./sonarqube/volume/sonarqube_conff:/opt/sonarqube/conf
-      - ./sonarqube/volume/sonarqube_dataa:/opt/sonarqube/data
-      - ./sonarqube/volume/sonarqube_extensionss:/opt/sonarqube/extensions
+      - ./volumes/sonarqube/sonarqube_conff:/opt/sonarqube/conf
+      - ./volumes/sonarqube/sonarqube_dataa:/opt/sonarqube/data
+      - ./volumes/sonarqube/sonarqube_extensionss:/opt/sonarqube/extensions
     ulimits:
       nofile:
         soft: 65536
@@ -40,34 +58,15 @@ services:
     image: postgres
     container_name: postgre
     networks:
-      - mynetwork
+      - pipeNet
     environment:
       - POSTGRES_USER=sonar
       - POSTGRES_PASSWORD=sonar
     volumes:
-      - ./postgre/volume/postgresqll:/var/lib/postgresql
-      - ./postgre/volume/postgresql_dataa:/var/lib/postgresql/data
-
-  jenkins:
-      build:
-          context: ./jenkins
-      container_name: jenkins
-      privileged: true
-      user: root
-      networks:
-          - mynetwork
-      volumes:
-          - ./jenkins/jenkins_home:/var/jenkins_home
-          - ./jenkins/jenkins_as_code/conf:/var/jenkins_conf
-          - ./app-workspace:/var/lib/jenkins/repo
-          - ./jenkins/jenkins_as_code/jobs/:/var/jenkins_home/jobs/
-          - ./jenkins/jenkins_as_code/ansible_cfg/:/etc/ansible/
-      ports:
-          - "8000:8080"
-      environment:
-      - CASC_JENKINS_CONFIG=/var/jenkins_conf
+      - ./volumes/postgre/postgresqll:/var/lib/postgresql
+      - ./volumes/postgre//postgresql_dataa:/var/lib/postgresql/data
 
 networks:
-  mynetwork:
+  pipeNet:
       driver: bridge
   

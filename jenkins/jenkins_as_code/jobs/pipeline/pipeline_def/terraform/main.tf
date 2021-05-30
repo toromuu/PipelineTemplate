@@ -67,7 +67,7 @@ resource "aws_instance" "pipeline" {
 
 
   provisioner "local-exec" {
-    command = "echo ${aws_instance.pipeline.public_ip} >> hosts.txt"
+    command = "echo ${aws_instance.pipeline.public_ip} >> ../ansible/inventory/hosts.txt"
   }
 
 }

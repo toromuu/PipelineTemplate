@@ -28,8 +28,8 @@ node {
                         -Dsonar.projectKey='appworkspace' \
                         -Dsonar.projectName='appworkspace' \
                         -Dsonar.projectVersion='1.0.0' \
-                        -Dsonar.login=admin \
-                        -Dsonar.password=admin \
+                        -Dsonar.login=sonar \
+                        -Dsonar.password=sonar \
                         -Dsonar.sources='src'
                 """
       }

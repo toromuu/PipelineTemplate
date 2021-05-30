@@ -73,7 +73,6 @@ ELSE{
 
 powershell wsl -d docker-desktop "sysctl -w vm.max_map_count=262144"
 
-#if kernal error https://docs.microsoft.com/en-us/windows/wsl/wsl2-kernel
 
 Restart-Computer
 
