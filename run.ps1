@@ -13,7 +13,7 @@ $repository=$Repo
 if (Test-Path ./jenkins.pem) {
     mv ./jenkins.pem ./jenkins/jenkins_as_code/jobs/pipeline/pipeline_def/
 } else {
-    Write-Host "Proporcione la clave pem aws"
+    Write-Host ".Pem Aws Key is required"
     exit
 }
 

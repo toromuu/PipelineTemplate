@@ -12,25 +12,6 @@ services:
     networks:
       - pipeNet
 
-  jenkins:
-    build:
-      context: ./jenkins
-    container_name: jenkins
-    privileged: true
-    user: root
-    networks:
-        - pipeNet
-    volumes:
-      - ./volumes/jenkins/jenkins_home:/var/jenkins_home
-      - ./jenkins/jenkins_as_code/conf:/var/jenkins_conf
-      - ./app-workspace:/var/lib/jenkins/repo
-      - ./jenkins/jenkins_as_code/jobs/:/var/jenkins_home/jobs/
-      - ./jenkins/jenkins_as_code/ansible_cfg/:/etc/ansible/
-    ports:
-      - "8000:8080"
-    environment:
-      - CASC_JENKINS_CONFIG=/var/jenkins_conf
-
   sonarqube:
     build:
         context: ./sonarqube
@@ -65,6 +46,26 @@ services:
     volumes:
       - ./volumes/postgre/postgresqll:/var/lib/postgresql
       - ./volumes/postgre//postgresql_dataa:/var/lib/postgresql/data
+
+  jenkins:
+    build:
+      context: ./jenkins
+    container_name: jenkins
+    privileged: true
+    user: root
+    networks:
+        - pipeNet
+    volumes:
+      - ./volumes/jenkins/jenkins_home:/var/jenkins_home
+      - ./jenkins/jenkins_as_code/conf:/var/jenkins_conf
+      - ./app-workspace:/var/lib/jenkins/repo
+      - ./app-workspace/src:/var/jenkins_home/jobs/pipeline/pipelinedef/src
+      - ./jenkins/jenkins_as_code/jobs/:/var/jenkins_home/jobs/
+      - ./jenkins/jenkins_as_code/ansible_cfg/:/etc/ansible/
+    ports:
+      - "8000:8080"
+    environment:
+      - CASC_JENKINS_CONFIG=/var/jenkins_conf
 
 networks:
   pipeNet:
