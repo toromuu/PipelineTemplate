@@ -84,13 +84,13 @@
       dest: /usr/local/bin/docker-compose
       mode: 'u+x,g+x'
 
-  # Copy de proyect-artifact
+  #Copy de proyect
   - name: Copy file
     copy:
       src: /var/lib/jenkins/repo
       dest: /home/ubuntu/
 
-  # Clean
+  #Clean
   - name: Run `docker-compose down`
     shell:
       cmd: "docker-compose down"
@@ -101,10 +101,9 @@
     shell:
       cmd: "docker-compose build"
       chdir: /home/ubuntu/repo
-      
-  # Up
+
+  # UP
   - name: Run `docker-compose up`
     shell:
       cmd: "docker-compose up -d"
       chdir: /home/ubuntu/repo
-
